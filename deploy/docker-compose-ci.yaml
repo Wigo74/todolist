@@ -23,7 +23,7 @@ services:
       context: ..
       dockerfile: Dockerfile
     env_file:
-      - config_compose.py
+      - config_compose
     environment:
         DB_HOST: db
     depends_on:
@@ -43,7 +43,7 @@ services:
     build:
       context: ..
       dockerfile: Dockerfile
-    env_file: config_compose.py
+    env_file: config_compose
     environment:
       DB_HOST: db
     depends_on:
@@ -57,7 +57,7 @@ services:
       - my-network
     image: postgres:15.1-alpine
     restart: always
-    env_file: config_compose.py
+    env_file: config_compose
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
