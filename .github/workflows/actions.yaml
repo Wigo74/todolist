@@ -16,12 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_and_push
     env:
-      DB_USER: todolist
+      DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
     steps:
       - name: clone code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: render configs
         run: |
           mkdir deploy-ci
