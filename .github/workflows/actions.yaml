@@ -24,24 +24,24 @@ jobs:
         uses: actions/checkout@v2
       - name: render configs
         run: |
-          mkdir deploy_ci
-          cat deploy/docker-compose-ci.yaml | envsubst > deploy-ci/docker-compose.yaml
-          cat deploy/.env | envsubst > deploy_ci/.env
+          mkdir deploy
+          cat deploy/docker-compose-ci.yaml | envsubst > deploy/docker-compose.yaml
+          cat deploy/.env | envsubst > deploy/.env
       - name: copy files to server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          source: "deploy_ci/docker-compose.yaml,deploy_ci/.env"
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          source: "deploy/docker-compose.yaml,deploy/.env"
           target: "todolist"
           strip_components: 1
       - name: deploy app
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
           script: |
             cd todolist
             echo ${{ secrets.SSH_PASSWORD }} | sudo -S docker-compose down | sudo -S docker-compose up -d
