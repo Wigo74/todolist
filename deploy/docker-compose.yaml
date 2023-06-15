@@ -13,23 +13,19 @@ services:
 
   api:
     container_name: api
-    restart: always
     build:
       context: ..
       dockerfile: Dockerfile
+    restart: always
     env_file:
       - config_compose
-    environment:
-        DB_HOST: db
     depends_on:
         db:
           condition: service_healthy
-
     ports:
         - "8000:8000"
     volumes:
         - .:/app
-
   migrations:
     build:
       context: ..

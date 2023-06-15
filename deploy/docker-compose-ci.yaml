@@ -14,24 +14,16 @@ services:
       - "80:80"
 
   api:
+    container_name: api
     networks:
       - my-network
     image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUD_RUN_ID
-    container_name: api
     restart: always
-    build:
-      context: ..
-      dockerfile: Dockerfile
     env_file:
       - config_compose
-    environment:
-        DB_HOST: db
     depends_on:
         db:
           condition: service_healthy
-
-    ports:
-        - "8000:8000"
     volumes:
         - .:/app
 
@@ -40,7 +32,7 @@ services:
       - my-network
     image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUD_RUN_ID
     build:
-      context: ..
+      context: .
       dockerfile: Dockerfile
     env_file: config_compose
     environment:
