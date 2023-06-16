@@ -39,8 +39,7 @@ services:
           condition: service_healthy
         migrations:
           condition: service_completed_successfully
-    command: >
-      sh -c "python3 manage.py migrate"
+    command: "python3 manage.py migrate"
 
   db:
     image: postgres:15.1-alpine

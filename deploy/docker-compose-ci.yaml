@@ -31,17 +31,13 @@ services:
 
   migrations:
       image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUD_RUN_ID
-      build:
-        context: .
-        dockerfile: Dockerfile
       env_file: config_compose
       environment:
         DB_HOST: db
       depends_on:
         db:
           condition: service_healthy
-      command: >
-      sh -c "python3 manage.py migrate"
+      command: "python3 manage.py migrate"
 
   frontend:
     image: sermalenk/skypro-front:lesson-34
