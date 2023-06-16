@@ -11,41 +11,42 @@ services:
     ports:
       - "80:80"
 
+
   api:
     container_name: api
     build:
-      context: ..
       dockerfile: Dockerfile
     restart: always
-    env_file:
-      - config_compose
+    env_file: .env
+    environment:
+      DB_HOST: db
     depends_on:
         db:
           condition: service_healthy
     ports:
         - "8000:8000"
     volumes:
-        - .:/app
+      - .:/todolist
+      - django_static:/todolist/static
   migrations:
     build:
-      context: ..
       dockerfile: Dockerfile
-    env_file: config_compose
+    env_file: .env
     environment:
       DB_HOST: db
     depends_on:
         db:
           condition: service_healthy
+        migrations:
+          condition: service_completed_successfully
     command: >
       sh -c "python3 manage.py migrate"
 
   db:
     image: postgres:15.1-alpine
     restart: always
-    env_file: config_compose
+    env_file: .env
     environment:
-      DEBUG: ${DEBUG}
-      SECRET_KEY: ${SECRET_KEY}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
@@ -60,8 +61,8 @@ services:
       retries: 10
 
 volumes:
-
   pgdb_data:
+  django_static:
 
 
 

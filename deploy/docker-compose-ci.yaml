@@ -2,9 +2,48 @@ version: '3.8'
 
 
 services:
+  db:
+    image: postgres:15.1-alpine
+    restart: always
+    env_file: config_compose
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - ./pgdb_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: pg_isready -U ${DB_USER} -d ${DB_NAME}
+      timeout: 3s
+      interval: 4s
+      retries: 10
+
+  api:
+    container_name: api
+    image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUD_RUN_ID
+    restart: always
+    env_file: config_compose
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - django_static:/todolist/static
+
+  migrations:
+      image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUD_RUN_ID
+      build:
+        context: .
+        dockerfile: Dockerfile
+      env_file: config_compose
+      environment:
+        DB_HOST: db
+      depends_on:
+        db:
+          condition: service_healthy
+      command: >
+      sh -c "python3 manage.py migrate"
+
   frontend:
-    networks:
-      - my-network
     image: sermalenk/skypro-front:lesson-34
     restart: always
     depends_on:
@@ -13,63 +52,9 @@ services:
     ports:
       - "80:80"
 
-  api:
-    container_name: api
-    networks:
-      - my-network
-    image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUD_RUN_ID
-    restart: always
-    env_file:
-      - config_compose
-    depends_on:
-        db:
-          condition: service_healthy
-    volumes:
-        - .:/app
-
-  migrations:
-    networks:
-      - my-network
-    image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUD_RUN_ID
-    build:
-      context: .
-      dockerfile: Dockerfile
-    env_file: config_compose
-    environment:
-      DB_HOST: db
-    depends_on:
-      db:
-        condition: service_healthy
-    command: >
-    sh -c "python3 manage.py migrate"
-
-  db:
-    networks:
-      - my-network
-    image: postgres:15.1-alpine
-    restart: always
-    env_file: config_compose
-    environment:
-      DEBUG: ${DEBUG}
-      SECRET_KEY: ${SECRET_KEY}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-        - ./pgdb_data:/var/lib/postgresql/data/
-
-    healthcheck:
-      test: pg_isready -U ${DB_USER} -d ${DB_NAME}
-      timeout: 3s
-      interval: 4s
-      retries: 10
-
 volumes:
   pgdb_data:
-
-networks:
-  my-network:
-
+  django_static:
 
 
 
