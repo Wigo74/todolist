@@ -50,6 +50,8 @@ services:
     restart: always
     env_file: config_compose
     environment:
+      DEBUG: ${DEBUG}
+      SECRET_KEY: ${SECRET_KEY}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
