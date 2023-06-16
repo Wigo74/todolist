@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: build_and_push
     env:
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: False
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
