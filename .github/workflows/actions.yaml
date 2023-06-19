@@ -17,6 +17,7 @@ jobs:
     needs: build_and_push
     env:
       SECRET_KEY: ${{secrets.SECRET_KEY}}
+      DB_ENGINE: ${{secrets.DB_ENGIN}}
       DEBUG: False
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -46,4 +47,5 @@ jobs:
           password: ${{ secrets.PASSWORD }}
           script: |
             cd todolist
-            echo ${{ secrets.PASSWORD }} | sudo -S docker-compose down | sudo -S docker-compose up -d
+            docker-compose down 
+            docker-compose up -d
