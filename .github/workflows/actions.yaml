@@ -17,7 +17,7 @@ jobs:
     needs: build_and_push
     env:
       SECRET_KEY: ${{secrets.SECRET_KEY}}
-      DB_ENGINE: django.db.backends.postgresql
+      DB_ENGINE: "django.db.backends.postgresql"
       DEBUG: False
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
