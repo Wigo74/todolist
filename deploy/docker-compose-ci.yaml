@@ -20,27 +20,35 @@ services:
 
   api:
     container_name: api
-    image: wigor74/skypro_todolist:origin/dip34
+    image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     restart: always
     env_file: config_compose
     depends_on:
       db:
         condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
     volumes:
       - django_static:/todolist/static
 
   migrations:
-      image: wigor74/skypro_todolist:origin/dip34
+      image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
       env_file: config_compose
       environment:
-        DB_HOST: db
+        DB_HOST: "db"
+        POSTGRES_USER: ${DB_USER}
+        POSTGRES_PASSWORD: ${DB_PASSWORD}
+        POSTGRES_DB: ${DB_NAME}
+        SECRET_KEY: ${SECRET_KEY}
       depends_on:
         db:
           condition: service_healthy
-      command: "python3 manage.py migrate"
+      command: >
+          sh -c "python3 manage.py migrate"
 
   frontend:
     image: sermalenk/skypro-front:lesson-34
+    platform: linux/amd64
     restart: always
     depends_on:
       api:

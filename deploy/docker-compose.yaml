@@ -2,16 +2,6 @@ version: '3.8'
 
 
 services:
-  frontend:
-    image: sermalenk/skypro-front:lesson-34
-    restart: always
-    depends_on:
-      api:
-        condition: service_started
-    ports:
-      - "80:80"
-
-
   api:
     container_name: api
     build:
@@ -19,7 +9,7 @@ services:
     restart: always
     env_file: .env
     environment:
-      DB_HOST: db
+      DB_HOST: "db"
     depends_on:
         db:
           condition: service_healthy
@@ -33,12 +23,10 @@ services:
       dockerfile: Dockerfile
     env_file: .env
     environment:
-      DB_HOST: db
+      DB_HOST: "db"
     depends_on:
         db:
           condition: service_healthy
-        migrations:
-          condition: service_completed_successfully
     command: "python3 manage.py migrate"
 
   db:
@@ -58,6 +46,16 @@ services:
       timeout: 3s
       interval: 4s
       retries: 10
+
+  frontend:
+    image: sermalenk/skypro-front:lesson-34
+    platform: linux/amd64
+    restart: always
+    depends_on:
+      api:
+        condition: service_started
+    ports:
+      - "80:80"
 
 volumes:
   pgdb_data:
