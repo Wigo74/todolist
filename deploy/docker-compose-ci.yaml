@@ -20,7 +20,7 @@ services:
 
   api:
     container_name: api
-    image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUD_RUN_ID
+    image: wigor74/skypro_todolist:origin/dip34
     restart: always
     env_file: config_compose
     depends_on:
@@ -30,7 +30,7 @@ services:
       - django_static:/todolist/static
 
   migrations:
-      image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUD_RUN_ID
+      image: wigor74/skypro_todolist:origin/dip34
       env_file: config_compose
       environment:
         DB_HOST: db
