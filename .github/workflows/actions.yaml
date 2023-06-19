@@ -17,11 +17,12 @@ jobs:
     needs: build_and_push
     env:
       SECRET_KEY: ${{secrets.SECRET_KEY}}
-      DB_ENGINE: ${{secrets.DB_ENGIN}}
+      DB_ENGINE: django.db.backends.postgresql
       DEBUG: False
       DB_USER: ${{ secrets.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_NAME: ${{ secrets.DB_NAME }}
+
     steps:
       - name: clone code
         uses: actions/checkout@v3
