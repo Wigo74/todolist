@@ -36,6 +36,7 @@ services:
       env_file: config_compose
       environment:
         DB_HOST: "db"
+        DB_ENGINE=django: "django.db.backends.postgresql"
         POSTGRES_USER: ${DB_USER}
         POSTGRES_PASSWORD: ${DB_PASSWORD}
         POSTGRES_DB: ${DB_NAME}
