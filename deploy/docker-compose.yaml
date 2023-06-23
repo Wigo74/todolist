@@ -48,7 +48,7 @@ services:
       retries: 10
 
   frontend:
-    image: sermalenk/skypro-front:lesson-34
+    image: sermalenk/skypro-front:lesson-35
     platform: linux/amd64
     restart: always
     depends_on:
