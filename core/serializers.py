@@ -10,6 +10,7 @@ USER_MODEL = get_user_model()
 class PasswordFields(serializers.CharField):
 
     def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         kwargs['style'] = {'input_type': 'password'}
         kwargs.setdefault('write_only', True)
         self.validators.append(validate_password)
@@ -20,6 +21,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     password_repeat = PasswordFields(requerid=True)
 
     class Meta:
+        read_only_fields = ("id",)
         model = USER_MODEL
         fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password', 'password_repeat')
 
