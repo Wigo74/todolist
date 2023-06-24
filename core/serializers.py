@@ -49,8 +49,9 @@ class LoginSerializer(serializers.ModelSerializer):
         return user
 
     class Meta:
+        read_only_fields = ("id",)
         model = USER_MODEL
-        fields = '__all__'
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'password', 'password_repeat')
 
 
 class UserSerializer(serializers.ModelSerializer):
