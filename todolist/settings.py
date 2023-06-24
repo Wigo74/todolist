@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'social_django_mongoengine',
     'social_django',
     'social_django_mongoengine',
     'todolist',
