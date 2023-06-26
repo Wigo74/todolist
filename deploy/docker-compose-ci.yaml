@@ -1,21 +1,25 @@
-version: '3.8'
+version: '3.9'
 
 
 services:
   db:
-    image: postgres:15.1-alpine
-    restart: always
-    env_file: config_compose
+    image: postgres:15.2
+    ports:
+      - "5432:5432"
     environment:
+      POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+    restart: always
+
+    container_name: db
+
     volumes:
-      - ./pgdb_data:/var/lib/postgresql/data/
+      - db_data:/var/lib/postgresql/data/
     healthcheck:
-      test: pg_isready -U ${DB_USER} -d ${DB_NAME}
-      timeout: 3s
-      interval: 4s
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 3s
+      timeout: 4s
       retries: 10
 
   api:
@@ -23,32 +27,29 @@ services:
     image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     restart: always
     env_file: config_compose
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
+      SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
+      SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
     depends_on:
       db:
         condition: service_healthy
-      migrations:
-        condition: service_completed_successfully
+    ports:
+      - "8000:8000"
     volumes:
-      - django_static:/todolist/static
+      - .:/app
 
-  migrations:
-      image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-      env_file: config_compose
-      environment:
-        DB_HOST: "db"
-        DB_ENGINE: "django.db.backends.postgresql"
-        POSTGRES_USER: ${DB_USER}
-        POSTGRES_PASSWORD: ${DB_PASSWORD}
-        POSTGRES_DB: ${DB_NAME}
-        SECRET_KEY: ${SECRET_KEY}
-      depends_on:
-        db:
-          condition: service_healthy
-      command: >
-          sh -c "python3 manage.py migrate"
 
   frontend:
     image: sermalenk/skypro-front:lesson-35
+    container_name: frontend
     platform: linux/amd64
     restart: always
     depends_on:
@@ -59,7 +60,7 @@ services:
 
 volumes:
   pgdb_data:
-  django_static:
+
 
 
 
