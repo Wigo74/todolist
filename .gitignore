@@ -62,7 +62,7 @@ db.sqlite3
 db.sqlite3-journal
 views_cop.py
 serializers_cop.py
-db.sqlite3
+
 
 # Flask stuff:
 instance/
@@ -164,3 +164,5 @@ cython_debug/
 
 
 
+/views_cop.py
+/serializers_cop.py
