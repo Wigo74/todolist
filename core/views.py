@@ -23,13 +23,13 @@ class SignupView(CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = CreateUserSerializer
 
-    # def perform_create(self, serializer):
-    #     super().perform_create(serializer)
-    #     login(
-    #         self.request,
-    #         user=serializer.user,
-    #         backend="django.contrib.auth.backends.ModelBackend",
-    #     )
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        login(
+            self.request,
+            user=serializer.user,
+            backend="django.contrib.auth.backends.ModelBackend",
+        )
 
 
 class LoginView(GenericAPIView):
@@ -37,17 +37,12 @@ class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
-        # s: LoginSerializer = self.get_serializer(data=request.data)
-        # s.is_valid(raise_exception=True)
-        # user = s.validated_data["user"]
-        # login(request=request, user=user)
-        # user_serializer = UserSerializer(instance=user)
-        # return Response(user_serializer.data)
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        s: LoginSerializer = self.get_serializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        user = s.validated_data["user"]
         login(request=request, user=user)
-        return Response(serializer.data)
+        user_serializer = UserSerializer(instance=user)
+        return Response(user_serializer.data)
 
 
 class ProfileView(RetrieveUpdateDestroyAPIView):
@@ -61,8 +56,7 @@ class ProfileView(RetrieveUpdateDestroyAPIView):
 
     def delete(self, request, *args, **kwargs):
         logout(request)
-        # return Response({})
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({})
 
 
 class UpdatePasswordView(UpdateAPIView):
