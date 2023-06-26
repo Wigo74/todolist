@@ -48,15 +48,15 @@ services:
 
 
   frontend:
-    image: sermalenk/skypro-front:lesson-35
+    image: sermalenk/skypro-front:lesson-36
     container_name: frontend
-    platform: linux/amd64
     restart: always
+    ports:
+      - "80:80"
     depends_on:
       api:
         condition: service_started
-    ports:
-      - "80:80"
+
 
 volumes:
   db_data:
