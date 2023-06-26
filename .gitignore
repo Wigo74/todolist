@@ -60,9 +60,9 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-/views_cop.py
-/serializers_cop.py
-/db.sqlite3
+views_cop.py
+serializers_cop.py
+db.sqlite3
 
 # Flask stuff:
 instance/
