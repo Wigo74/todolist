@@ -48,7 +48,7 @@ services:
           sh -c "python3 manage.py migrate"
 
   frontend:
-    image: sermalenk/skypro-front:lesson-34
+    image: sermalenk/skypro-front:lesson-35
     platform: linux/amd64
     restart: always
     depends_on:
