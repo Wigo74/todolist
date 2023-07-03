@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'social_django',
     'todolist',
     'core',
+    'goals',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -78,7 +80,7 @@ DATABASES = {
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
+        'HOST': env('DB_HOST', default='127.0.0.1'),
         'PORT': env('DB_PORT'),
     }
 }
@@ -130,22 +132,10 @@ AUTHENTICATION_BACKENDS = (
 
 AUTH_USER_MODEL = 'core.User'
 
-# SOCIAL_AUTH_STORAGE = 'social_django_mongoengine.models.DjangoStorage'
-#
-# SOCIAL_AUTH_JSONFIELD_ENABLED = True
-# SOCIAL_AUTH_POSTGRES_ENABLED = True
-# SOCIAL_AUTH_VK_SCOPE = ['email']
-# SOCIAL_AUTH_VK_OAUTH2_KEY = env('SOCIAL_AUTH_VK_OAUTH2_KEY')
-# SOCIAL_AUTH_VK_OAUTH2_SECRET = env('SOCIAL_AUTH_VK_OAUTH2_SECRET')
-# SOCIAL_AUTH_URL_NAMESPACE = 'social'
-# SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/categories'
-# SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-err'
-# SOCIAL_AUTH_USER_MODEL = 'core.User'
-
 SOCIAL_AUTH_JSONFIELD_ENABLED = True  # After
 
 SOCIAL_AUTH_POSTGRES_ENABLED = True
-SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email', 'photos', 'notify']
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_PIPELINE = [
@@ -165,10 +155,31 @@ SOCIAL_AUTH_VK_OAUTH2_SECRET = os.environ.get("SOCIAL_AUTH_VK_OAUTH2_SECRET")
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/logged-in/"
 SOCIAL_AUTH_LOGIN_ERROR_URL = "/login-error/"
 
+
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend', ],
 
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    'TEST_REQUEST_RENDERER_CLASSES': [
+        'rest_framework.renderers.MultiPartRenderer',
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.TemplateHTMLRenderer'
+    ]
 }
+
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.SessionAuthentication',
+#     ],
+#     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend',
+#                                 ],
+#
+#     'DEFAULT_PAGINATION_CLASS': ['rest_framework.pagination.LimitOffsetPagination',
+#                                  ],
+#
+# }
