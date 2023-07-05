@@ -166,3 +166,5 @@ cython_debug/
 
 /views_cop.py
 /serializers_cop.py
+
+.DS_Store
