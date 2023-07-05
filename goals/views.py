@@ -16,11 +16,12 @@ from goals.serializers import (
     GoalCreateSerializer,
     GoalCategorySerializer,
     GoalSerializer,
-    CommentCreateSerializer,
     CommentSerializer,
-    GoalCategoryCreateSerializer, BoardSerializer, BoarWithParticipantsSerializer,
+    GoalCategoryCreateSerializer, BoardSerializer, BoarWithParticipantsSerializer, CommentWithUserSerializer,
 )
 
+
+# GoalCategory
 
 class GoalCategoryCreateView(CreateAPIView):
     model = GoalCategory
@@ -29,7 +30,7 @@ class GoalCategoryCreateView(CreateAPIView):
 
 
 class GoalCategoryListView(ListAPIView):
-    permission_classes = [permissions.IsAuthenticated, GoalCategoryPermissions]
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = GoalCategorySerializer
     pagination_class = LimitOffsetPagination
     filter_backends = [filters.OrderingFilter, filters.SearchFilter]
@@ -55,6 +56,8 @@ class GoalCategoryDetailView(RetrieveUpdateDestroyAPIView):
             instance.save(update_fields=['is_deleted'])
             instance.goal_set.update(status=Goal.Status.archived)
 
+
+# Goal
 
 class GoalCreateView(CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -88,18 +91,20 @@ class GoalListDetailView(RetrieveUpdateDestroyAPIView):
         instance.save(update_fields=['status'])
 
 
+# Comment
+
 class CommentCreateView(CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = CommentCreateSerializer
+    serializer_class = CommentSerializer
 
 
 class CommentListView(ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = CommentSerializer
+    serializer_class = CommentWithUserSerializer
     pagination_class = LimitOffsetPagination
     filter_backends = [filters.OrderingFilter, DjangoFilterBackend]
-    filterset_fields = ["goal"]
-    ordering = "-id"
+    filterset_fields = ['goal']
+    ordering = ['-created']
 
     def get_queryset(self):
         return GoalComment.objects.filter(
@@ -108,18 +113,19 @@ class CommentListView(ListAPIView):
 
 class CommentDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [CommentPermissions]
-    serializer_class = CommentSerializer
+    serializer_class = CommentWithUserSerializer
 
     def get_queryset(self):
         return GoalComment.objects.select_related("user").filter(
             goal__category__board__participants__user=self.request.user)
 
 
+# Board
+
 class BoardDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [BoardPermissions]
     serializer_class = BoarWithParticipantsSerializer
     queryset = Board.objects.prefetch_related('participants__user').exclude(is_deleted=True)
-
 
     def perform_destroy(self, instance: Board) -> None:
         # При удалении доски помечаем ее как is_deleted,
