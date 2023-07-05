@@ -100,7 +100,7 @@ class CommentCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = GoalComment
         fields = "__all__"
-        read_only_fields = ("id", "created", "updated", "user")
+        read_only_fields = ("id", "created", "updated")
 
     def validate_goal(self, value: Goal) -> Goal:
         if value.status == Goal.Status.archived:
@@ -114,16 +114,17 @@ class CommentCreateSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    # user = UserSerializer(read_only=True)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = GoalComment
         fields = "__all__"
-        read_only_fields = ("id", "created", "updated", "user", "goal")
+        read_only_fields = ("id", "created", "updated", "user")
 
     def validate_goal(self, value: Goal) -> Goal:
-        if value.user != self.context["request"].user:
-            raise serializers.ValidationError("not owner of goal")
+        if value.status == Goal.Status.archived:
+            raise serializers.ValidationError("Goal not found")
         if not BoardParticipant.objects.filter(
                 board_id=value.category.board_id,
                 role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],

@@ -103,7 +103,7 @@ class CommentListView(ListAPIView):
 
     def get_queryset(self):
         return GoalComment.objects.filter(
-            ggoal__category__board__participants__user=self.request.user)
+            goal__category__board__participants__user=self.request.user)
 
 
 class CommentDetailView(RetrieveUpdateDestroyAPIView):
