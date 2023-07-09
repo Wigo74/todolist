@@ -40,7 +40,7 @@ services:
       DEBUG: ${DEBUG}
       SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
       SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
-      BOT_TOKEN: ${BOT_TOKEN}
+
     # Зависимость от другого сервиса
     depends_on:
       db:

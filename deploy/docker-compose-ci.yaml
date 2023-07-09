@@ -66,7 +66,7 @@ services:
       DEBUG: 0
       SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
       SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
-      BOT_TOKEN: 6281761017:AAH8qWxBLGSE4D2qyorc3znon35HYxqulY0
+      BOT_TOKEN: ${BOT_TOKEN}
     depends_on:
        db:
           condition: service_healthy
