@@ -56,17 +56,20 @@ services:
     build: .
     # Задание имени контейнера для сервиса django
     container_name: bot
-    # Задание команды, которую нужно запустить при запуске контейнера для сервиса django
-    command: python manage.py runbot
-    env_file: .env
+
     environment:
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      BOT_TOKEN: ${BOT_TOKEN}
       DB_HOST: db
 
     # Зависимость от другого сервиса
     depends_on:
       db:
         condition: service_healthy
-
+    command: python manage.py runbot
 
 
   frontend:

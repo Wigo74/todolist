@@ -49,15 +49,23 @@ services:
       - .:/app
 
   bot:
-    # Сборка образа для сервиса django из текущей директории
+
     image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
-    # Задание имени контейнера для сервиса django
+
     restart: always
     container_name: bot
-    # Задание команды, которую нужно запустить при запуске контейнера для сервиса django
-    command: python manage.py runbot
+
     environment:
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      BOT_TOKEN: ${BOT_TOKEN}
       DB_HOST: db
+    depends_on:
+       db:
+          condition: service_healthy
+    command: python manage.py runbot
 
   frontend:
     image: sermalenk/skypro-front:lesson-38
