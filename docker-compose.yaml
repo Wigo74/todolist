@@ -58,12 +58,17 @@ services:
     container_name: bot
 
     environment:
+      DB_HOST: db
       DB_PORT: 5432
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+      DB_ENGINE: ${DB_ENGINE}
+      DEBUG: 0
+      SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
+      SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
       BOT_TOKEN: ${BOT_TOKEN}
-      DB_HOST: db
 
     # Зависимость от другого сервиса
     depends_on:
