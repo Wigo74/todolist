@@ -47,9 +47,19 @@ services:
     volumes:
       - .:/app
 
+  bot:
+    # Сборка образа для сервиса django из текущей директории
+    image: wigor74/skypro_todolist:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    # Задание имени контейнера для сервиса django
+    restart: always
+    container_name: bot
+    # Задание команды, которую нужно запустить при запуске контейнера для сервиса django
+    command: python manage.py runbot
+    environment:
+      DB_HOST: db
 
   frontend:
-    image: sermalenk/skypro-front:lesson-37
+    image: sermalenk/skypro-front:lesson-38
     container_name: frontend
     restart: always
     ports:

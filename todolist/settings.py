@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'core',
     'goals',
     'django_filters',
+    'bot',
 ]
 
 MIDDLEWARE = [
@@ -65,8 +66,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'social_django.context_processors.backends',  # Добавил эту строку
-                'social_django.context_processors.login_redirect',  # Добавил эту строку
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -85,17 +86,7 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#
-#     'default': {
-#
-#         'ENGINE': 'django.db.backends.sqlite3',
-#
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#
-#     }
-#
-# }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -132,7 +123,7 @@ AUTHENTICATION_BACKENDS = (
 
 AUTH_USER_MODEL = 'core.User'
 
-SOCIAL_AUTH_JSONFIELD_ENABLED = True  # After
+SOCIAL_AUTH_JSONFIELD_ENABLED = True
 
 SOCIAL_AUTH_POSTGRES_ENABLED = True
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
@@ -171,15 +162,4 @@ REST_FRAMEWORK = {
     ]
 }
 
-
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.SessionAuthentication',
-#     ],
-#     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend',
-#                                 ],
-#
-#     'DEFAULT_PAGINATION_CLASS': ['rest_framework.pagination.LimitOffsetPagination',
-#                                  ],
-#
-# }
+BOT_TOKEN = os.environ.get('BOT_TOKEN')

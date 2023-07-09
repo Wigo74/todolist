@@ -50,9 +50,26 @@ services:
     volumes:
       - .:/app
 
+  bot:
+    # Сборка образа для сервиса django из текущей директории
+    build: .
+    # Задание имени контейнера для сервиса django
+    container_name: bot
+    # Задание команды, которую нужно запустить при запуске контейнера для сервиса django
+    command: python manage.py runbot
+    env_file: .env
+    environment:
+      DB_HOST: db
+
+    # Зависимость от другого сервиса
+    depends_on:
+      db:
+        condition: service_healthy
+
+
 
   frontend:
-    image: sermalenk/skypro-front:lesson-37
+    image: sermalenk/skypro-front:lesson-38
     container_name: frontend
     restart: always
     ports:
