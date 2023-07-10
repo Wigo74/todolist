@@ -1,0 +1,6 @@
+.gitignore
+
+views_cop.py
+serializers_cop.py
+db.sqlite3
+

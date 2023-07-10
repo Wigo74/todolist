@@ -1,71 +1,94 @@
-version: '3.8'
-
+version: '3.9'
 
 services:
-  frontend:
-    image: sermalenk/skypro-front:lesson-34
+  db:
+    # Использование готового образа postgres
+    image: postgres:15.2
+    # Задание переменных окружения для контейнера с postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     restart: always
+    # Задание имени контейнера для сервиса db
+    container_name: db
+    # Связывание тома с директорией в контейнере для сохранения данных postgres
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 3s
+      timeout: 4s
+      retries: 10
+
+  api:
+    # Сборка образа для сервиса django из текущей директории
+    build: .
+    # Задание имени контейнера для сервиса django
+    container_name: api
+    # Задание команды, которую нужно запустить при запуске контейнера для сервиса django
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+      DEBUG: ${DEBUG}
+      SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
+      SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
+      BOT_TOKEN: ${BOT_TOKEN}
+    # Зависимость от другого сервиса
+    depends_on:
+      db:
+        condition: service_healthy
+    # Открытие порта на хостовой машине и перенаправление на порт в контейнере
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+
+  bot:
+    # Сборка образа для сервиса django из текущей директории
+    build: .
+    # Задание имени контейнера для сервиса django
+    container_name: bot
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SECRET_KEY: ${SECRET_KEY}
+      DB_ENGINE: ${DB_ENGINE}
+      DEBUG: 0
+      SOCIAL_AUTH_VK_OAUTH2_KEY: ${SOCIAL_AUTH_VK_OAUTH2_KEY}
+      SOCIAL_AUTH_VK_OAUTH2_SECRET: ${SOCIAL_AUTH_VK_OAUTH2_SECRET}
+      BOT_TOKEN: ${BOT_TOKEN}
+
+    # Зависимость от другого сервиса
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python manage.py runbot
+
+  frontend:
+    image: sermalenk/skypro-front:lesson-38
+    container_name: frontend
+    restart: always
+    ports:
+      - "80:80"
     depends_on:
       api:
         condition: service_started
-    ports:
-      - "80:80"
 
-  api:
-    container_name: api
-    restart: always
-    build:
-      context: ..
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    environment:
-        DB_HOST: db
-    depends_on:
-        db:
-          condition: service_healthy
-        migrations:
-          condition: service_completed_successfully
-    ports:
-        - "8000:8000"
-    volumes:
-        - .:/app
-
-  migrations:
-    build:
-      context: ..
-      dockerfile: Dockerfile
-    env_file: .env
-    environment:
-      DB_HOST: db
-    depends_on:
-        db:
-          condition: service_healthy
-    command: >
-      sh -c "python3 manage.py migrate"
-
-  db:
-    image: postgres:15.1-alpine
-    restart: always
-    env_file: .env
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-        - pgdb_data:/var/lib/postgresql/data/
-    ports:
-        - '5432:5432'
-    healthcheck:
-      test: pg_isready -U ${DB_USER} -d ${DB_NAME}
-      timeout: 3s
-      interval: 4s
-      retries: 10
 
 volumes:
-
-  pgdb_data:
-
+  db_data:
 
 
 
