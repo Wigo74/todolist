@@ -1,0 +1,15 @@
+# pyproject.toml
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = 'todolist.settings'
+python_files = [
+    'tests.py',
+    'test_*.py',
+    '*_tests.py'
+]
+filterwarnings = [
+    "error",
+    "ignore::UserWarning",
+    # note the use of single quote below to denote "raw" strings in TOML
+    'ignore:pkg_resources is deprecated as an API:DeprecationWarning',
+    'ignore:distutils:DeprecationWarning',
+]

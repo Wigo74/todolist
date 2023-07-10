@@ -25,3 +25,4 @@ marshmallow==3.14.1
 marshmallow-dataclass==8.5.3
 pydantic==1.10.7
 python-stdnum==1.18
+

@@ -1,5 +1,5 @@
 from rest_framework.request import Request
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework import serializers
 from django.db import transaction
 from core.models import User
@@ -18,8 +18,8 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
         if not BoardParticipant.objects.filter(
                 board_id=board.id,
                 role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
-                user_id=self.context['request'].user).exists():
-            raise PermissionDenied
+                user=self.context['request'].user):
+            raise ValidationError('You dont have permission create category in this board')
         return board
 
     class Meta:
@@ -53,7 +53,7 @@ class GoalCreateSerializer(serializers.ModelSerializer):
         if not BoardParticipant.objects.filter(
                 board_id=value.board_id,
                 role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
-                user_id=self.context['request'].user).exists():
+                user=self.context['request'].user).exists():
             raise PermissionDenied
         return value
 
@@ -114,7 +114,7 @@ class BoardSerializer(serializers.ModelSerializer):
 
 class BoardParticipantSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(
-        required=True, choices=BoardParticipant.editable_choices
+        required=True, choices=BoardParticipant.Role.choices[1:]
     )
     user = serializers.SlugRelatedField(
         slug_field="username", queryset=User.objects.all()
@@ -148,5 +148,5 @@ class BoarWithParticipantsSerializer(BoardSerializer):
             )
             if title := validated_data.get('title'):
                 instance.title = title
-            instance.save()
+                instance.save()
         return instance
